@@ -1,9 +1,8 @@
-package com.example.ecommercemerchant
+package com.example.ecommercemerchant.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.ecommercemerchant.databinding.ActivityAddBannerBinding
 import com.example.ecommercemerchant.databinding.ActivitySelectionBinding
 
 class SelectionActivity : AppCompatActivity() {
@@ -18,7 +17,10 @@ class SelectionActivity : AppCompatActivity() {
             startActivity(Intent(this  , AddBannerActivity::class.java))
         }
         binding.buttonAddProduct.setOnClickListener {
-            startActivity(Intent(this  , AddProduct::class.java))
+            startActivity(Intent(this  , AddProductActivity::class.java))
+        }
+        binding.buttonAddCategory.setOnClickListener {
+            startActivity(Intent(this  , AddCategoryActivity::class.java))
         }
     }
 }

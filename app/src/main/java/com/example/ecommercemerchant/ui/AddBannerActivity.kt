@@ -1,28 +1,20 @@
-package com.example.ecommercemerchant
+package com.example.ecommercemerchant.ui
 
-import android.R.attr
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.ecommercemerchant.R
 import com.example.ecommercemerchant.databinding.ActivityAddBannerBinding
 import com.google.firebase.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
-import com.google.firebase.storage.taskState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import java.io.File
 
 
 class AddBannerActivity : AppCompatActivity() {
