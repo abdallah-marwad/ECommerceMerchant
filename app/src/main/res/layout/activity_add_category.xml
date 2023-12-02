@@ -5,23 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.AddCategoryActivity">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/spinnerCategory"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/_35sdp"
-        android:layout_weight="1"
-        android:hint="Category" />
 
-    <ImageView
-        android:id="@+id/addCategory"
-        android:layout_width="@dimen/_35sdp"
-        android:layout_height="@dimen/_35sdp"
-        android:background="@drawable/border"
-        android:padding="@dimen/_4sdp"
-        android:layout_marginHorizontal="@dimen/_5sdp"
-        android:src="@drawable/ic_add" />
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/spinnerCategory"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_weight="1"
+            android:text="Add Category"
+            android:textSize="@dimen/_20sdp"
+            android:gravity="center_vertical"
+            android:textColor="@color/black"
+            android:paddingStart="@dimen/_8sdp"
+           />
+
+        <ImageView
+            android:id="@+id/addCategory"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:background="@drawable/border"
+            android:padding="@dimen/_4sdp"
+            android:src="@drawable/ic_add" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

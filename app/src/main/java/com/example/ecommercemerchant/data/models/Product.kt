@@ -7,7 +7,6 @@ data class Product (
     var name: String? = null,
     var description: String? = null,
     var brandName: String? = null,
-    var acceptSubCategory: Boolean? = null,
     var quantity: Int? = null,
     var price: Double? = null,
     var offerValue: Double? = null,

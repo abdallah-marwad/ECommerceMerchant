@@ -58,12 +58,12 @@ class FirebaseManager {
 
     fun addMainCategory(
         documentName : String,
-        firestore: FirebaseFirestore
-    ){
+        catUrl : String,
+        firestore: FirebaseFirestore,
+    )=
+         firestore.collection("category").document(documentName).
+         set(Category(documentName , catUrl))
 
-
-         firestore.collection("main_category").document(documentName).set(Product())
-    }
 
 
 }
