@@ -28,7 +28,7 @@ android {
         }
     }
     buildFeatures {
-        viewBinding =true
+        viewBinding = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -50,10 +50,12 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    //Color picker
+    implementation("com.github.skydoves:colorpickerview:2.2.4")
 
     // SDP Library
-    implementation( "com.intuit.sdp:sdp-android:1.1.0")
+    implementation("com.intuit.sdp:sdp-android:1.1.0")
 // SSP Library
-    implementation ("com.intuit.ssp:ssp-android:1.1.0")
-    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    implementation("com.intuit.ssp:ssp-android:1.1.0")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
 }

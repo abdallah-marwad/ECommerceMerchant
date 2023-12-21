@@ -12,7 +12,7 @@
 
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/productsInfo"
+            android:id="@+id/productsInfoArea"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
@@ -49,14 +49,21 @@
                     android:layout_weight="1"
                     android:hint="Category" />
 
-                <ImageView
+                <RelativeLayout
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:background="@drawable/btn_bg_ripple"
+                    >
+                    <ImageView
                     android:id="@+id/addCategory"
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_35sdp"
                     android:background="@drawable/border"
-                    android:padding="@dimen/_4sdp"
-                    android:layout_marginHorizontal="@dimen/_5sdp"
+                        android:padding="@dimen/_4sdp"
                     android:src="@drawable/ic_add" />
+                </RelativeLayout>
+
             </LinearLayout>
 
             <EditText
@@ -83,13 +90,14 @@
 
 
         <LinearLayout
+            android:id="@+id/productDetailsArea"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="@id/productsInfo"
-            app:layout_constraintStart_toStartOf="@id/productsInfo"
-            app:layout_constraintTop_toBottomOf="@id/productsInfo">
+            app:layout_constraintEnd_toEndOf="@id/productsInfoArea"
+            app:layout_constraintStart_toStartOf="@id/productsInfoArea"
+            app:layout_constraintTop_toBottomOf="@id/productsInfoArea">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -99,12 +107,33 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/edSizes"
-                android:layout_width="match_parent"
+<!--            <androidx.appcompat.widget.AppCompatSpinner-->
+<!--                android:id="@+id/spinnerSizes"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="@dimen/_35sdp"-->
+<!--                android:layout_weight="1"-->
+<!--                 />-->
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Sizes (Optional) | use , between each new size"
-                android:inputType="number" />
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnAddSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Sizes"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvSelectedSizes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:gravity="center"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -148,8 +177,51 @@
                     android:layout_marginStart="20dp"
                     android:gravity="center"
                     android:textSize="14sp" />
+
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/posterImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="poster Image"
+                    android:textSize="14sp" />
+
+
+                <TextView
+                    android:id="@+id/posterImageDone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:gravity="center"
+                    android:text="Done"
+                    android:visibility="gone"
+                    android:textSize="14sp" />
+            </LinearLayout>
+            <Button
+                android:id="@+id/btnAddProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:text="Add Product"
+                 />
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

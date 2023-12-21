@@ -93,21 +93,7 @@ class AddCategoryActivity : AppCompatActivity() {
 
     }
 
-    private fun addCategoryOrProductDialog() {
-        AddingTypeBottomSheet().showAddingTypeDialog(this) {
-            if (it == -1) {
-                Toast.makeText(baseContext, "Please select a type", Toast.LENGTH_SHORT).show()
-                return@showAddingTypeDialog
-            }
-            if (it == PRODUCT) {
-                Toast.makeText(baseContext, "Please fill required items", Toast.LENGTH_SHORT).show()
-                return@showAddingTypeDialog
 
-            }
-            addMainCategoryDialog()
-
-        }
-    }
 
     private fun activityOnClick() {
         binding.addCategory.setOnClickListener {
@@ -131,6 +117,22 @@ class AddCategoryActivity : AppCompatActivity() {
         if (requestCode == 1) {
             categoryBottomSheet.setImageUri(data.data)
             fileUri =data.data
+
+        }
+    }
+
+    private fun addCategoryOrProductDialog() {
+        AddingTypeBottomSheet().showAddingTypeDialog(this) {
+            if (it == -1) {
+                Toast.makeText(baseContext, "Please select a type", Toast.LENGTH_SHORT).show()
+                return@showAddingTypeDialog
+            }
+            if (it == PRODUCT) {
+                Toast.makeText(baseContext, "Please fill required items", Toast.LENGTH_SHORT).show()
+                return@showAddingTypeDialog
+
+            }
+            addMainCategoryDialog()
 
         }
     }
