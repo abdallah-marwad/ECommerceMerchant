@@ -84,6 +84,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Offer Percentage (Optional)"
+                android:inputType="numberDecimal" />
+            <EditText
+                android:id="@+id/quantityEd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Quantity"
                 android:inputType="number" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

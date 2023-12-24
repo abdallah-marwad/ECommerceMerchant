@@ -19,11 +19,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ecommercemerchant.data.firebase_manager.FirebaseManager
 import com.example.ecommercemerchant.data.firebase_manager.UploadImage
+import com.example.ecommercemerchant.data.models.Product
 import com.example.ecommercemerchant.databinding.ActivityMainBinding
 import com.example.ecommercemerchant.utils.AddCategoryBottomSheet
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.storage
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
@@ -31,8 +30,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.Date
+import java.util.UUID
+
 const val PRODUCT_IMGS = "products"
 
 class AddProductActivity : AppCompatActivity() {
@@ -41,12 +42,13 @@ class AddProductActivity : AppCompatActivity() {
     val uploadProductImages: UploadImage by lazy { UploadImage() }
     val uploadCategoryImage: UploadImage by lazy { UploadImage() }
     val uploadPosterImage: UploadImage by lazy { UploadImage() }
+    val uploadImage: UploadImage by lazy { UploadImage() }
     var fileUri: Uri? = null
     private val firestore = FirebaseFirestore.getInstance()
     private var parentJob: Job = Job()
     private var coroutineScope: CoroutineScope = CoroutineScope(parentJob + Dispatchers.IO)
     private var categoriesList: ArrayList<String> = ArrayList()
-    private var imagesList: ArrayList<Uri> = ArrayList()
+    private var productImagesList: ArrayList<Uri> = ArrayList()
     private var colorsList: ArrayList<Int> = ArrayList()
     private var sizesList: ArrayList<String> = ArrayList()
     private var selectedCategory: String = ""
@@ -61,6 +63,9 @@ class AddProductActivity : AppCompatActivity() {
         activityOnClick()
         detectSelectedCategory()
         categoriesRealTimeListener()
+
+//        uploadImageErrorCallBack()
+//        uploadImageLoadingCallBack()
     }
 
     private fun showProgress() {
@@ -128,6 +133,21 @@ class AddProductActivity : AppCompatActivity() {
 
         }
     }
+//    private fun addMainCategoryDialog() {
+//        categoryBottomSheet = AddCategoryBottomSheet()
+//        categoryBottomSheet.showAddCategoryDialog(this)
+//        { collectionName ->
+//            uploadedImageNameAndUrlCallBack(false)
+//            binding.progress.visibility = View.VISIBLE
+//            uploadCategoryImage.uploadImage(
+//                collectionName,
+//                "main_categories",
+//                fileUri
+//            )
+//
+//        }
+//    }
+
 
     private fun addMainCategoryDialog() {
         categoryBottomSheet = AddCategoryBottomSheet()
@@ -154,7 +174,7 @@ class AddProductActivity : AppCompatActivity() {
                 hideProgress()
         }
 
-        uploadCategoryImage.dataLiveData.observe(this) {
+        uploadCategoryImage.uploadedImageData.observe(this) {
             addMainCategory(
                 it[0],
                 it[1]
@@ -182,14 +202,14 @@ class AddProductActivity : AppCompatActivity() {
 
 
     private fun uploadProductImages() {
-        uploadProductImages.uploadListOfImages(PRODUCT_IMGS , imagesList)
+        uploadProductImages.uploadListOfImages(PRODUCT_IMGS , productImagesList)
         uploadImagesCallBack()
     }
 
     private fun updateColors() {
         var colors = ""
         colorsList.forEach {
-            colors = "$colors ${Integer.toHexString(it)}, "
+            colors += "${Integer.toHexString(it)}, "
         }
         binding.tvSelectedColors.text = colors
     }
@@ -198,27 +218,27 @@ class AddProductActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val intent = result.data
-                imagesList.clear()
+                productImagesList.clear()
 
                 if (intent?.clipData != null) {
                     val count = intent.clipData?.itemCount ?: 0
 
                     (0 until count).forEach {
                         val imagesUri = intent.clipData?.getItemAt(it)?.uri
-                        imagesUri?.let { uri -> imagesList.add(uri) }
+                        imagesUri?.let { uri -> productImagesList.add(uri) }
                     }
 
                     //One images was selected
                 } else {
                     val imageUri = intent?.data
-                    imageUri?.let { imagesList.add(it) }
+                    imageUri?.let { productImagesList.add(it) }
                 }
                 updateImages()
             }
         }
 
     private fun updateImages() {
-        binding.tvSelectedImages.setText(imagesList.size.toString())
+        binding.tvSelectedImages.setText(productImagesList.size.toString())
     }
 
     private fun openSizesDialog() {
@@ -321,10 +341,52 @@ class AddProductActivity : AppCompatActivity() {
         binding.tvSelectedSizes.text = sizeTxt
     }
     private fun addProduct(imgList : ArrayList<String>) {
+        try{
+            showProgress()
+           FirebaseManager().addProduct(
+               selectedCategory,
+               getProductObj(imgList),
+               firestore
+           ) .addOnSuccessListener {
+               hideProgress()
+               Toast.makeText(this , "Successfully Adding Product" , Toast.LENGTH_SHORT).show()
+
+
+           }.addOnFailureListener {
+               hideProgress()
+               Toast.makeText(this , it.message , Toast.LENGTH_LONG).show()
+
+           }
+
+
+        }catch (e : Exception){
+            Toast.makeText(this , "Some err happened" , Toast.LENGTH_SHORT).show()
+        }
+
+
+    }
+    private fun getProductObj(imgList: ArrayList<String>): Product {
+        val offerValue = (binding.edPrice.text.toString().trim().toDouble() *
+                binding.offerPercentage.text.toString().trim().toDouble()) / 100
+        return Product(
+            UUID.randomUUID().toString(),
+            binding.edName.text.toString().trim(),
+            selectedCategory,
+            binding.edDescription.text.toString().trim(),
+            binding.quantityEd.text.toString().trim().toInt(),
+            binding.edPrice.text.toString().trim().toDouble(),
+            offerValue,
+            binding.offerPercentage.text.toString().trim().toDouble(),
+            Date().time,
+            imgList,
+            sizesList,
+            colorsList,
+            posterDownloadUrl
+        )
 
     }
     private fun uploadImagesCallBack() {
-        uploadProductImages.imgUrl.observe(this){
+        uploadProductImages.imageUrls.observe(this){
             addProduct(it)
         }
         uploadProductImages.loadingLiveData.observe(this){
@@ -339,15 +401,15 @@ class AddProductActivity : AppCompatActivity() {
     }
 
     private fun uploadPosterImage() {
-
         uploadPosterImage.uploadImage(
             imgPath = PRODUCT_IMGS,
             fileUri = posterImage
         )
         posterImageCallBack()
     }
+
     private fun posterImageCallBack() {
-        uploadPosterImage.dataLiveData.observe(this){
+        uploadPosterImage.uploadedImageData.observe(this){
             uploadProductImages()
             posterDownloadUrl = it[1]
         }
@@ -361,6 +423,41 @@ class AddProductActivity : AppCompatActivity() {
             Toast.makeText(this,it,Toast.LENGTH_SHORT).show()
         }
     }
+//    private fun uploadImageLoadingCallBack() {
+//        uploadImage.loadingLiveData.observe(this){
+//            if(it)
+//                showProgress()
+//            else
+//                hideProgress()
+//        }
+//    }
+//  private fun uploadImageErrorCallBack() {
+//      uploadImage.errLiveData.observe(this){
+//          Toast.makeText(this,it,Toast.LENGTH_SHORT).show()
+//      }
+//    }
+//    private fun uploadProductImages() {
+//        uploadProductImages.uploadListOfImages(PRODUCT_IMGS , productImagesList)
+//        uploadedImageUrlsCallBack()
+//    }
+//    private fun uploadedImageNameAndUrlCallBack(isPoster : Boolean) {
+//      uploadImage.uploadedImageData.observe(this){
+//          if(isPoster){
+//              uploadProductImages()
+//              posterDownloadUrl = it[1]
+//              return@observe
+//          }
+//          addMainCategory(
+//              it[0],
+//              it[1]
+//          )
+//      }
+//    }
+//    private fun uploadedImageUrlsCallBack() {
+//      uploadImage.imageUrls.observe(this){
+//          addProduct(it)
+//      }
+//    }
 
     private fun isInputsValid(): Boolean {
         var isValid = true
@@ -378,12 +475,12 @@ class AddProductActivity : AppCompatActivity() {
             Toast.makeText(this, "Please choose category", Toast.LENGTH_SHORT).show()
             isValid = false
         }
-        if (imagesList.isEmpty()) {
+        if (productImagesList.isEmpty()) {
             Toast.makeText(this, "Please add images", Toast.LENGTH_SHORT).show()
             isValid = false
         }
         if (posterImage==null) {
-            Toast.makeText(this, "Please add poster images", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please add poster image", Toast.LENGTH_SHORT).show()
             isValid = false
         }
         return isValid
@@ -405,16 +502,16 @@ class AddProductActivity : AppCompatActivity() {
         binding.btnAddProduct.setOnClickListener {
             if (isInputsValid().not())
                 return@setOnClickListener
-
             uploadPosterImage()
+//            uploadedImageNameAndUrlCallBack(true)
         }
         binding.buttonImagesPicker.setOnClickListener {
             val intent = Intent(ACTION_GET_CONTENT)
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             intent.type = "image/*"
             selectImagesActivityResult.launch(intent)
-
         }
+
         binding.buttonColorPicker.setOnClickListener {
             ColorPickerDialog
                 .Builder(this)
@@ -427,12 +524,10 @@ class AddProductActivity : AppCompatActivity() {
                             updateColors()
                         }
                     }
-
                 }).setNegativeButton("Cancel") { colorPicker, _ ->
                     colorPicker.dismiss()
                 }.show()
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

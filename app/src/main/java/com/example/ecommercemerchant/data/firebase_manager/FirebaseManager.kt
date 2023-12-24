@@ -63,6 +63,14 @@ class FirebaseManager {
     )=
          firestore.collection("category").document(documentName).
          set(Category(documentName , catUrl))
+    fun addProduct(
+        documentName : String,
+        product : Product,
+        firestore: FirebaseFirestore,
+    )=
+         firestore.collection("category").document(documentName).collection("Product")
+             .document(product.id!!).set(product)
+
 
 
 

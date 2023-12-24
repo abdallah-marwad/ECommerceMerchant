@@ -15,8 +15,8 @@ class UploadImage {
     val imageRef = Firebase.storage.reference
     val errLiveData  = MutableLiveData<String>()
     val loadingLiveData  = MutableLiveData<Boolean>()
-    val dataLiveData  = MutableLiveData<List<String>>()
-    val imgUrl  = MutableLiveData<ArrayList<String>>()
+    val uploadedImageData  = MutableLiveData<List<String>>()
+    val imageUrls  = MutableLiveData<ArrayList<String>>()
 
     fun uploadImage(imgName: String = "", imgPath: String, fileUri: Uri? ) {
         var mutableImgName =imgName
@@ -35,7 +35,7 @@ class UploadImage {
 
                 .addOnSuccessListener {
                     var array = listOf(imgName ,runBlocking {ref.downloadUrl.await().toString()})
-                    dataLiveData.postValue(array)
+                    uploadedImageData.postValue(array)
                     loadingLiveData.postValue(false)
                 }
 
@@ -68,7 +68,7 @@ class UploadImage {
                     errLiveData.postValue(e.message)
                 }
             }
-            imgUrl.postValue(images)
+            imageUrls.postValue(images)
         }
 
     }
