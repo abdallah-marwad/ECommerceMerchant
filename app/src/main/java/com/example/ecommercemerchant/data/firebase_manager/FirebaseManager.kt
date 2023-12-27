@@ -48,13 +48,6 @@ class FirebaseManager {
 
         return collectionReference.document(documentName)
     }
-    fun addSubCategory(
-        documentName : String,
-        documentReference : DocumentReference
-    ){
-         documentReference.collection("category").document(documentName).set(Product())
-    }
-
 
     fun addMainCategory(
         documentName : String,
@@ -64,12 +57,10 @@ class FirebaseManager {
          firestore.collection("category").document(documentName).
          set(Category(documentName , catUrl))
     fun addProduct(
-        documentName : String,
         product : Product,
         firestore: FirebaseFirestore,
     )=
-         firestore.collection("category").document(documentName).collection("Product")
-             .document(product.id!!).set(product)
+         firestore.collection("products").document(product.id!!).set(product)
 
 
 

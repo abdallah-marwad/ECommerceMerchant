@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
@@ -124,7 +125,6 @@ class AddProductActivity : AppCompatActivity() {
                 if (p2 == 0) {
                     selectedCategory = ""
                     return
-
                 }
                 selectedCategory = categoriesList[p2]
             }
@@ -202,7 +202,7 @@ class AddProductActivity : AppCompatActivity() {
 
 
     private fun uploadProductImages() {
-        uploadProductImages.uploadListOfImages(PRODUCT_IMGS , productImagesList)
+        uploadProductImages.uploadListOfImages(PRODUCT_IMGS, productImagesList)
         uploadImagesCallBack()
     }
 
@@ -277,14 +277,14 @@ class AddProductActivity : AppCompatActivity() {
         val close: ImageView =
             dialogView.findViewById(com.example.ecommercemerchant.R.id.close)
 
-        if(sizesList.size >0)
-            sizesList.forEach { selectedSize->
-            checkBoxList.forEach {checkBox->
-                if(selectedSize==checkBox.text)
-                    checkBox.isChecked = true
+        if (sizesList.size > 0)
+            sizesList.forEach { selectedSize ->
+                checkBoxList.forEach { checkBox ->
+                    if (selectedSize == checkBox.text)
+                        checkBox.isChecked = true
+                }
             }
-        }
-        close.setOnClickListener{
+        close.setOnClickListener {
             customDialog.dismiss()
             updateSizesTxt()
         }
@@ -340,34 +340,46 @@ class AddProductActivity : AppCompatActivity() {
         }
         binding.tvSelectedSizes.text = sizeTxt
     }
-    private fun addProduct(imgList : ArrayList<String>) {
-        try{
+
+    private fun addProduct(imgList: ArrayList<String>) {
+        try {
             showProgress()
-           FirebaseManager().addProduct(
-               selectedCategory,
-               getProductObj(imgList),
-               firestore
-           ) .addOnSuccessListener {
-               hideProgress()
-               Toast.makeText(this , "Successfully Adding Product" , Toast.LENGTH_SHORT).show()
+            FirebaseManager().addProduct(
+                getProductObj(imgList),
+                firestore
+            ).addOnSuccessListener {
+                hideProgress()
+                Toast.makeText(this, "Successfully Adding Product", Toast.LENGTH_SHORT).show()
 
 
-           }.addOnFailureListener {
-               hideProgress()
-               Toast.makeText(this , it.message , Toast.LENGTH_LONG).show()
+            }.addOnFailureListener {
+                hideProgress()
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
 
-           }
+            }
 
 
-        }catch (e : Exception){
-            Toast.makeText(this , "Some err happened" , Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Some err happened", Toast.LENGTH_SHORT).show()
+            Log.d("test", "Some err happened ${e.message}")
         }
 
 
     }
+
     private fun getProductObj(imgList: ArrayList<String>): Product {
-        val offerValue = (binding.edPrice.text.toString().trim().toDouble() *
-                binding.offerPercentage.text.toString().trim().toDouble()) / 100
+        var hasOffer = false
+        var offerValue: Double
+        var offerPercentage = 0.0
+        if (binding.offerPercentage.text.toString().trim().equals("").not()) {
+            offerPercentage = binding.offerPercentage.text.toString().trim().toDouble()
+        }
+        offerValue = (binding.edPrice.text.toString().trim().toDouble() * offerPercentage) / 100
+
+
+        if (offerValue > 0) {
+            hasOffer = true
+        }
         return Product(
             UUID.randomUUID().toString(),
             binding.edName.text.toString().trim(),
@@ -376,6 +388,7 @@ class AddProductActivity : AppCompatActivity() {
             binding.quantityEd.text.toString().trim().toInt(),
             binding.edPrice.text.toString().trim().toDouble(),
             offerValue,
+            hasOffer,
             binding.offerPercentage.text.toString().trim().toDouble(),
             Date().time,
             imgList,
@@ -385,18 +398,19 @@ class AddProductActivity : AppCompatActivity() {
         )
 
     }
+
     private fun uploadImagesCallBack() {
-        uploadProductImages.imageUrls.observe(this){
+        uploadProductImages.imageUrls.observe(this) {
             addProduct(it)
         }
-        uploadProductImages.loadingLiveData.observe(this){
-            if(it)
+        uploadProductImages.loadingLiveData.observe(this) {
+            if (it)
                 showProgress()
             else
                 hideProgress()
         }
-        uploadProductImages.errLiveData.observe(this){
-            Toast.makeText(this,it,Toast.LENGTH_SHORT).show()
+        uploadProductImages.errLiveData.observe(this) {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -409,18 +423,18 @@ class AddProductActivity : AppCompatActivity() {
     }
 
     private fun posterImageCallBack() {
-        uploadPosterImage.uploadedImageData.observe(this){
+        uploadPosterImage.uploadedImageData.observe(this) {
             uploadProductImages()
             posterDownloadUrl = it[1]
         }
-        uploadPosterImage.loadingLiveData.observe(this){
-            if(it)
+        uploadPosterImage.loadingLiveData.observe(this) {
+            if (it)
                 showProgress()
             else
                 hideProgress()
         }
-        uploadPosterImage.errLiveData.observe(this){
-            Toast.makeText(this,it,Toast.LENGTH_SHORT).show()
+        uploadPosterImage.errLiveData.observe(this) {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
     }
 //    private fun uploadImageLoadingCallBack() {
@@ -479,17 +493,18 @@ class AddProductActivity : AppCompatActivity() {
             Toast.makeText(this, "Please add images", Toast.LENGTH_SHORT).show()
             isValid = false
         }
-        if (posterImage==null) {
+        if (posterImage == null) {
             Toast.makeText(this, "Please add poster image", Toast.LENGTH_SHORT).show()
             isValid = false
         }
         return isValid
     }
+
     private fun activityOnClick() {
         binding.posterImage.setOnClickListener {
             val intent = Intent(ACTION_GET_CONTENT)
             intent.type = "image/*"
-           startActivityForResult(intent, 2)
+            startActivityForResult(intent, 2)
         }
         binding.addCategory.setOnClickListener {
             addMainCategoryDialog()
