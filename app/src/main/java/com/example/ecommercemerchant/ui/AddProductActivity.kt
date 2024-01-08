@@ -64,6 +64,8 @@ class AddProductActivity : AppCompatActivity() {
         activityOnClick()
         detectSelectedCategory()
         categoriesRealTimeListener()
+        uploadImagesCallBack()
+        posterImageCallBack()
 
 //        uploadImageErrorCallBack()
 //        uploadImageLoadingCallBack()
@@ -203,7 +205,7 @@ class AddProductActivity : AppCompatActivity() {
 
     private fun uploadProductImages() {
         uploadProductImages.uploadListOfImages(PRODUCT_IMGS, productImagesList)
-        uploadImagesCallBack()
+
     }
 
     private fun updateColors() {
@@ -419,7 +421,7 @@ class AddProductActivity : AppCompatActivity() {
             imgPath = PRODUCT_IMGS,
             fileUri = posterImage
         )
-        posterImageCallBack()
+
     }
 
     private fun posterImageCallBack() {
@@ -437,42 +439,6 @@ class AddProductActivity : AppCompatActivity() {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
     }
-//    private fun uploadImageLoadingCallBack() {
-//        uploadImage.loadingLiveData.observe(this){
-//            if(it)
-//                showProgress()
-//            else
-//                hideProgress()
-//        }
-//    }
-//  private fun uploadImageErrorCallBack() {
-//      uploadImage.errLiveData.observe(this){
-//          Toast.makeText(this,it,Toast.LENGTH_SHORT).show()
-//      }
-//    }
-//    private fun uploadProductImages() {
-//        uploadProductImages.uploadListOfImages(PRODUCT_IMGS , productImagesList)
-//        uploadedImageUrlsCallBack()
-//    }
-//    private fun uploadedImageNameAndUrlCallBack(isPoster : Boolean) {
-//      uploadImage.uploadedImageData.observe(this){
-//          if(isPoster){
-//              uploadProductImages()
-//              posterDownloadUrl = it[1]
-//              return@observe
-//          }
-//          addMainCategory(
-//              it[0],
-//              it[1]
-//          )
-//      }
-//    }
-//    private fun uploadedImageUrlsCallBack() {
-//      uploadImage.imageUrls.observe(this){
-//          addProduct(it)
-//      }
-//    }
-
     private fun isInputsValid(): Boolean {
         var isValid = true
         val nameTxt = binding.edName.text.toString()
@@ -483,6 +449,10 @@ class AddProductActivity : AppCompatActivity() {
         }
         if (priceTxt.isEmpty()) {
             binding.edPrice.error = "Please enter price"
+            isValid = false
+        }
+        if (binding.edDescription.text.isEmpty()) {
+            binding.edPrice.error = "Please enter description"
             isValid = false
         }
         if (selectedCategory == "") {
