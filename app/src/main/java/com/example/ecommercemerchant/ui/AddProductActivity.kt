@@ -396,6 +396,9 @@ class AddProductActivity : AppCompatActivity() {
             imgList,
             sizesList,
             colorsList,
+            ArrayList(),
+            0,
+            5f,
             posterDownloadUrl
         )
 
